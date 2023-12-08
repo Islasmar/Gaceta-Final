@@ -38,7 +38,7 @@ Esto incluye actividades culturales,noticias de la carrera casos de exito proyec
 La gaceta contendra un producto de alta calidad que este bien escrito y editado.Al igual que habra un apartado de eventos y se subira tanto como los eventos recien realizados y los proximos a realizar.En general la gaceta sera un medio de comunicación que puede ofrecer a los estudiantes una variedad de beneficios.Al informar sobre las actividades y eventos de la universidad, la gaceta ayuda a los estudiantes a mantenerse informados y conectados con la comunidad universitaria.
 
 ## Funcionalidades del Producto 
-La gaceta es un medio de comunicación impreso o digital que informa sobre las actividades culturales,eventos,noticias y deportes de la universidad.Es una herramienta importante para mantener a los alumnos de la universidad informada.
+La gaceta es un medio de comunicación digital que informa sobre las actividades culturales,eventos,noticias y deportes de la universidad.Es una herramienta importante para mantener a los alumnos de la universidad informada.
 
 Las funcionalidades de la gaceta para la universidad deben estar diseñadas para cumplir con los siguientes objetivos:
 
