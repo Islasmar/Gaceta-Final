@@ -71,6 +71,10 @@ const autenticar = async(req,res) =>{
 
 }
 
+const cerrarSesion = (req, res) => {
+    return res.clearCookie('_token').status(200).redirect('/auth/login')
+}
+
 const formularioRegistro = (req, res) => {
     console.log(req.csrfToken())
     res.render('auth/registro', {
@@ -270,6 +274,7 @@ const nuevoPassword = async (req, res) => {
 export {
     formularioLogin,
     autenticar,
+    cerrarSesion,
     formularioRegistro,
     formularioOlvidePassword,
     registrar,

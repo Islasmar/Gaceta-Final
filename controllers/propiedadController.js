@@ -1,6 +1,7 @@
 import { unlink } from 'node:fs/promises'
 import { validationResult } from 'express-validator';
-import { Precio, Categoria, Propiedad, Usuario } from '../models/index.js';
+import { Precio, Categoria, Propiedad, Mensaje, Usuario } from '../models/index.js';
+import { esVendedor, formatearFecha } from '../helpers/index.js'
 
 const admin = async (req, res) => {
     //Leer QueryString
@@ -11,48 +12,52 @@ const admin = async (req, res) => {
     }
 
     try {
-    const { id } = req.usuario
+        const { id } = req.usuario
 
-    //Limites y Offset para el paginador.
-    const limit = 1;
-    const offset = ((paginaActual * limit)-limit)
+        //Limites y Offset para el paginador.
+        const limit = 2;
+        const offset = ((paginaActual * limit) - limit)
 
-    const [propiedades,total] = await Promise.all([
-        Propiedad.findAll({
-            limit,
-            offset,
-            where: {
-                usuarioId: id
-            },
-            include: [
-                {
-                    model: Categoria,
-                    as: 'categoria'
+        const [propiedades, total] = await Promise.all([
+            Propiedad.findAll({
+                limit,
+                offset,
+                where: {
+                    usuarioId: id
                 },
-                {
-                    model: Precio,
-                    as: 'precio'
+                include: [
+                    {
+                        model: Categoria,
+                        as: 'categoria'
+                    },
+                    {
+                        model: Precio,
+                        as: 'precio'
+                    },
+                    {
+                        model: Mensaje,
+                        as: 'mensajes'
+                    }
+                ]
+            }),
+            Propiedad.count({
+                where: {
+                    usuarioId: id
                 }
-            ]
-        }),
-        Propiedad.count({
-            where: {
-                usuarioId: id
-            }
-        })
-    ])
+            })
+        ])
 
-    res.render('propiedades/admin', {
-        pagina: 'Mis propiedades',
-        propiedades,
-        csrfToken: req.csrfToken(),
-        paginas: Math.ceil(total /limit),
-        paginaActual: Number(paginaActual),
-        total,
-        offset,
-        limit
-    })
-        
+        res.render('propiedades/admin', {
+            pagina: 'Mis propiedades',
+            propiedades,
+            csrfToken: req.csrfToken(),
+            paginas: Math.ceil(total / limit),
+            paginaActual: Number(paginaActual),
+            total,
+            offset,
+            limit
+        })
+
     } catch (error) {
         console.log(error)
     }
@@ -279,8 +284,57 @@ const eliminar = async (req, res) => {
     await propiedad.destroy()
     res.redirect('/mis-propiedades')
 }
+
+//Modificar el  Estado de una Propiedad.
+const cambiarEstado = async (req,res)=>{
+    const { id } = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if (!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    //Revisar quin visita la URL sea dueño de la propeidd
+    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-propiedades')
+    }
+    //Actualizar.
+    propiedad.publicado = !propiedad.publicado
+
+    await propiedad.save()
+
+    res.json({
+        resultado: 'true'
+    })
+}
+
+
 //Muestra una Propiedad 
 const mostrarPropiedad = async (req, res) => {
+    const { id } = req.params
+    //Validar que la propiedad exista.
+    const propiedad = await Propiedad.findByPk(id, {
+        include: [
+            { model: Precio, as: 'precio' },
+            { model: Categoria, as: 'categoria' }
+        ]
+    })
+
+    if (!propiedad || !propiedad.publicado) {
+        return res.redirect('/404')
+    }
+
+    res.render('propiedades/mostrar', {
+        propiedad,
+        pagina: propiedad.titulo,
+        csrfToken: req.csrfToken(),
+        usuario: req.usuario,
+        esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId)
+    })
+}
+const enviarMensaje = async (req, res) => {
     const { id } = req.params
     //Validar que la propiedad exista.
     const propiedad = await Propiedad.findByPk(id, {
@@ -294,10 +348,61 @@ const mostrarPropiedad = async (req, res) => {
         return res.redirect('/404')
     }
 
+    //Renderizar los errores.
+    //Validación 
+    let resultado = validationResult(req)
+    if (!resultado.isEmpty()) {
+        return res.render('propiedades/mostrar', {
+            propiedad,
+            pagina: propiedad.titulo,
+            csrfToken: req.csrfToken(),
+            usuario: req.usuario,
+            esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId),
+            errores: resultado.array()
+        })
+    }
 
-    res.render('propiedades/mostrar', {
-        propiedad,
-        pagina: propiedad.titulo
+    const { mensaje } = req.body
+    const { id: propiedadId } = req.params
+    const { id: usuarioId } = req.usuario
+
+    //Almacenar el mensaje.
+    await Mensaje.create({
+        mensaje,
+        propiedadId,
+        usuarioId
+    })
+
+    res.redirect('/')
+}
+//Leer mensajes recibidos.
+const verMensajes = async (req, res) => {
+    const { id } = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id,{
+        include: [
+            {model: Mensaje, as: 'mensajes',
+            include:[
+                {model: Usuario.scope('eliminarPassword'), as: 'usuario'}
+            ]
+        } 
+        ],
+    })
+
+    if (!propiedad) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    //Revisar que quien visita la URL sea dueño de la propiedad
+    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-propiedades')
+    }
+
+    res.render('propiedades/mensajes', {
+        pagina: 'Mensajes',
+        mensajes: propiedad.mensajes,
+        formatearFecha
     })
 }
 export {
@@ -309,5 +414,8 @@ export {
     editar,
     guardarCambios,
     eliminar,
-    mostrarPropiedad
+    cambiarEstado,
+    mostrarPropiedad,
+    enviarMensaje,
+    verMensajes
 }
