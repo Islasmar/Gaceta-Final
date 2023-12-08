@@ -31,3 +31,6 @@ La creación y desarrollo de la Gaceta Universitaria de la carrera de Desarrollo
 - MySQL
 - Sequelize
 - - -
+
+## Alcance del Producto 
+
