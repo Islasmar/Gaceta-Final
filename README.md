@@ -37,3 +37,5 @@ La gaceta debe ser un medio confiable y actualizado, que brinde a los alumnos de
 Esto incluye actividades culturales,noticias de la carrera casos de exito proyectos mas relevantes como concursos o eventos recientes.
 La gaceta contendra un producto de alta calidad que este bien escrito y editado.Al igual que habra un apartado de eventos y se subira tanto como los eventos recien realizados y los proximos a realizar.En general la gaceta sera un medio de comunicación que puede ofrecer a los estudiantes una variedad de beneficios.Al informar sobre las actividades y eventos de la universidad, la gaceta ayuda a los estudiantes a mantenerse informados y conectados con la comunidad universitaria.
 
+## Funcionalidades del Producto 
+
