@@ -12,7 +12,7 @@ const formularioLogin = (req, res) => {
         csrfToken: req.csrfToken()
     });
 }
-const autenticar = async(req,res) =>{
+const autenticar = async (req, res) => {
     await check('email').isEmail().withMessage('El email es obligatorio').run(req)
     await check('password').notEmpty().withMessage('El password es obligatorio').run(req)
 
@@ -86,7 +86,14 @@ const formularioRegistro = (req, res) => {
 const registrar = async (req, res) => {
     //Validación
     await check('nombre').notEmpty().withMessage('El nombre no puede ir vacio').run(req)
-    await check('email').isEmail().withMessage('El email no puede ir vacio').run(req)
+    await check('email')
+        .isEmail().withMessage('El email no puede ir vacío')
+        .custom((value) => {
+            if (!value.endsWith('@utxicotepec.edu.mx')) {
+                throw new Error('El email debe tener el prefijo @utxicotepec.edu.mx');
+            }
+            return true;
+        })
     await check('password').isLength({ min: 6 }).withMessage('El password deve de ser de al menos mínimo 6 caracteres').run(req)
     await check('repetir_password').equals(req.body.password).withMessage('Los password no coinciden').run(req);
 
@@ -221,9 +228,9 @@ const resetPassword = async (req, res) => {
 }
 
 const comprobarToken = async (req, res) => {
-    const {token} =req.params;
-    const usuario = await Usuario.findOne({where: {token}})
-    if(!usuario){
+    const { token } = req.params;
+    const usuario = await Usuario.findOne({ where: { token } })
+    if (!usuario) {
         return res.render('auth/confirmar-cuenta', {
             pagina: 'Reestablecer tu Password',
             mensaje: 'Hubo un error al validar tu información, intenta nuevamente',
@@ -231,7 +238,7 @@ const comprobarToken = async (req, res) => {
         })
     }
     //Mostrar formulario para modificar el password.
-    res.render('auth/reset-password',{
+    res.render('auth/reset-password', {
         pagina: 'Restablece Tu Password',
         csrfToken: req.csrfToken()
     })
@@ -252,19 +259,19 @@ const nuevoPassword = async (req, res) => {
             errores: resultado.array(),
         })
     }
-    const { token } =req.params
-    const {password} =req.body;
+    const { token } = req.params
+    const { password } = req.body;
 
     //Identificar quien hace el cambio.
-    const usuario = await Usuario.findOne({where: {token}});
-    
+    const usuario = await Usuario.findOne({ where: { token } });
+
     //Hashear el nuevo password.
-    const salt= await bcrypt.genSalt(10)
+    const salt = await bcrypt.genSalt(10)
     Usuario.password = await bcrypt.hash(password, salt);
     usuario.token = null;
     await usuario.save();
 
-    res.render('auth/confirmar-cuenta',{
+    res.render('auth/confirmar-cuenta', {
         pagina: 'Password Restablecido',
         mensaje: 'El Password se guardó correctamente'
     })

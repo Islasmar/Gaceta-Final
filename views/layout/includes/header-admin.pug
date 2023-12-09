@@ -1,11 +1,11 @@
-header.bg-indigo-600.p-4 
+header.bg-aqua.p-4 
     .container.mx-auto.flex.justify-between.items-center
             a(href="/") 
                 h1.text-2xl.text-white.font-extrabold.text-center Bienes 
                     span.font-normal Raíces
             nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden") 
-                a(href="/mis-propiedades") Mis propiedades    
-                a(href="") Mi Perfil 
+                a(href="/mis-propiedades" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Mis propiedades    
+                a(href="" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Mi Perfil 
                 form(action="/auth/cerrar-sesion" method="POST")  
                     input(type="hidden" name="_csrf" value= csrfToken)
-                    button(type="submit" class="bg-white text-black h-full  hover:bg-azul hover:text-black   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Cerrar Sesión    
+                    button(type="submit" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Cerrar Sesión    
