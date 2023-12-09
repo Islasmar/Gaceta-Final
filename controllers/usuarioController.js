@@ -177,7 +177,7 @@ const confirmar = async (req, res) => {
 
 const formularioOlvidePassword = (req, res) => {
     res.render('auth/olvide-password', {
-        pagina: 'Recuperar tu acceso a Bienes Raices',
+        pagina: 'Recuperar tu acceso a Gaceta UTXJ',
         csrfToken: req.csrfToken()
 
     });
@@ -193,7 +193,7 @@ const resetPassword = async (req, res) => {
     if (!resultado.isEmpty()) {
         //Errores
         return res.render('auth/olvide-password', {
-            pagina: 'Recuperar tu acceso a Bienes Raices',
+            pagina: 'Recuperar tu acceso a Gaceta UTXJ',
             csrfToken: req.csrfToken(),
             errores: resultado.array()
         })
@@ -203,7 +203,7 @@ const resetPassword = async (req, res) => {
     const usuario = await Usuario.findOne({ where: { email } })
     if (!usuario) {
         return res.render('auth/olvide-password', {
-            pagina: 'Recuperar tu acceso a Bienes Raices',
+            pagina: 'Recuperar tu acceso a Gaceta UTXJ',
             csrfToken: req.csrfToken(),
             errores: [{ msg: 'El email no pertenece a ningun usuario' }]
         })

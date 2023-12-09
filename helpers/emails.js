@@ -13,12 +13,12 @@ const emailRegistro = async (datos) =>{
 
       //Enviar el email
       await transport.sendMail({
-        from: 'BienesRaices.com',
+        from: 'BienesUTXJ.com',
         to: email,
-        subject: 'Confirma tu Cuneta en BienesRaices.com',
-        text: 'Confirma tu Cuneta en BienesRaices.com',
+        subject: 'Confirma tu Cuneta en BienesUTXJ.com',
+        text: 'Confirma tu Cuneta en BienesUTXJ.com',
         html: `
-            <p>Hola ${nombre}, comprueba tu cuenta en BienesRaices.com</p>
+            <p>Hola ${nombre}, comprueba tu cuenta en BienesUTXJ.com</p>
 
             <p>Tu cuenta ya esta lista, solo debes confirmarla en el siguiente enlace:
             <a href="${process.env.BACKEND_URL}:${process.env.SERVER_PORT}/auth/confirmar/${token}">Confirmar tu cuenta</a></p>
@@ -41,13 +41,13 @@ const emailOlvidepassword = async (datos) =>{
 
     //Enviar el email
     await transport.sendMail({
-      from: 'BienesRaices.com',
+      from: 'BienesUTXJ.com',
       to: email,
-      subject: 'Reestablecer tu password en BienesRaices.com',
-      text:    'Reestablecer tu password en BienesRaices.com',
+      subject: 'Reestablecer tu password en BienesUTXJ.com',
+      text:    'Reestablecer tu password en BienesUTXJ.com',
       html: `
            
-          <p>Hola ${nombre}, as soliciatdo reestablecer tu password en BienesRaices.com</p>
+          <p>Hola ${nombre}, as soliciatdo reestablecer tu password en BienesUTXJ.com</p>
 
           <p>Sigue el siguiente enlace para generar un password nuevo:
           <a href="${process.env.BACKEND_URL}:${process.env.SERVER_PORT}/auth/olvide-password/${token}">Reestablecer password</a></p>
