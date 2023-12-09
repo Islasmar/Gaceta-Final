@@ -17,7 +17,7 @@ Binevenidos a la aplicación web de la ***GACETA DE LA UTXJ(DSM,EVN)*** esta apl
 ## Objetivo
 La Gaceta Universitaria tiene como objetivo principal ser un enfoque de conocimiento y una fuente de inspiración para los estudiantes y profesionales inmersos en la carrera de Desarrollo de Software y Entornos Virtuales  con el propósito de: 
 ## Fomentar la Innovación Tecnológica
-## Promover el Emprendimiento Digita
+## Promover el Emprendimiento Digital
 ## Facilitar la Colaboración Interdisciplinaria
 
 ## Propósito 
