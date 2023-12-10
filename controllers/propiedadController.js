@@ -48,7 +48,7 @@ const admin = async (req, res) => {
         ])
 
         res.render('propiedades/admin', {
-            pagina: 'Mis propiedades',
+            pagina: 'Eventos y Noticias',
             propiedades,
             csrfToken: req.csrfToken(),
             paginas: Math.ceil(total / limit),
