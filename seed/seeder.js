@@ -4,7 +4,7 @@ import precios from './precios.js';
 import usuarios from './usuarios.js'
 import db from '../config/db.js'
 import Usuario from '../models/Usuario.js';
-import {Categoria,Precio,propiedades} from '../models/index.js';
+import {Categoria,Precio} from '../models/index.js';
 
 
 const importarDatos = async () => {
