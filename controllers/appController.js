@@ -1,36 +1,23 @@
 import {Sequelize} from 'sequelize';
-import { Precio, Categoria, Propiedad } from '../models/index.js';
+import {Categoria, Evento } from '../models/index.js';
 
 const inicio = async (req, res) => {
-    const [categorias, precios, casas, departamentos] = await Promise.all([
+    const [categorias, noticia, actividadesCulturales] = await Promise.all([
         Categoria.findAll({ raw: true }),
-        Precio.findAll({ raw: true }),
-        Propiedad.findAll({
+        Evento.findAll({
             limit: 3,
             where: {
                 categoriaId: 1
             },
-            include: [
-                {
-                    model: Precio,
-                    as: 'precio'
-                }
-            ],
             order: [
                 ['createdAt', 'DESC']
             ]
         }),
-        Propiedad.findAll({
+        Evento.findAll({
             limit: 3,
             where: {
                 categoriaID: 2
             },
-            include: [
-                {
-                    model: Precio,
-                    as: 'precio'
-                }
-            ],
             order: [
                 ['createdAt', 'DESC']
             ]
@@ -39,9 +26,8 @@ const inicio = async (req, res) => {
     res.render('inicio', {
         pagina: 'Inicio',
         categorias,
-        precios,
-        casas,
-        departamentos,
+        noticia,
+        actividadesCulturales,
         csrfToken: req.csrfToken()
     })
 
@@ -54,8 +40,8 @@ const categoria = async(req, res) => {
     if(!categoria){
         return res.redirect('/404')
     }
-    //Obtener la propiedades de las categorias.
-    const propiedades = await Propiedad.findAll({
+    //Obtener eventos  de las categorias.
+    const eventos = await Evento.findAll({
         where:{
             categoriaId: id
         },
@@ -65,7 +51,7 @@ const categoria = async(req, res) => {
     })
     res.render('categoria',{
         pagina: `${categoria.nombre}s en Venta`,
-        propiedades,
+        eventos,
         csrfToken: req.csrfToken()
     })
 
@@ -84,8 +70,8 @@ const buscador = async (req, res) => {
     if(!termino.trim()){
         return res.redirect('back')
     }
-        //consultar las propiedades
-        const propiedades = await Propiedad.findAll({
+        //consultar los eventos
+        const eventos = await Evento.findAll({
             where: {
                 titulo: {
                     [Sequelize.Op.like] : '%' + termino + '%'
@@ -97,7 +83,7 @@ const buscador = async (req, res) => {
         })
         res.render('busqueda',{
             pagina: 'Resultados de la Busqueda',
-            propiedades,
+            eventos,
             csrfToken: req.csrfToken()
         })
 

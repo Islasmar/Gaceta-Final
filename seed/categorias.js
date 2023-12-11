@@ -1,18 +1,18 @@
 const categorias = [
     {
-        nombre: 'Casa'
+        nombre: 'Noticia'
     },
     {
-        nombre: 'Departamento'
+        nombre: 'Actividades Culturales'
     },
     {
-        nombre: 'Bodega'
+        nombre: 'Informes de Rectoria'
     },
     {
-        nombre: 'Terreno'
+        nombre: 'Estadias'
     },
     {
-        nombre: 'Cabaña'
+        nombre: 'Becas'
     }
 ]
 

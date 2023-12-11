@@ -1,6 +1,6 @@
 import { unlink } from 'node:fs/promises'
 import { validationResult } from 'express-validator';
-import { Precio, Categoria, Propiedad, Mensaje, Usuario } from '../models/index.js';
+import { Categoria, Evento, Mensaje, Usuario } from '../models/index.js';
 import { esVendedor, formatearFecha } from '../helpers/index.js'
 
 const admin = async (req, res) => {
@@ -8,7 +8,7 @@ const admin = async (req, res) => {
     const { pagina: paginaActual } = req.query
     const expresion = /^[0-9]$/ //Expresión regular donde solo se aceptan dígitos del 0-9
     if (!expresion.test(paginaActual)) { //Forma en la que se comprobará si la expresión regular comple con un patrón.
-        return res.redirect('/mis-propiedades?pagina=1')
+        return res.redirect('/mis-eventos?pagina=1')
     }
 
     try {
@@ -18,8 +18,8 @@ const admin = async (req, res) => {
         const limit = 2;
         const offset = ((paginaActual * limit) - limit)
 
-        const [propiedades, total] = await Promise.all([
-            Propiedad.findAll({
+        const [eventos, total] = await Promise.all([
+            Evento.findAll({
                 limit,
                 offset,
                 where: {
@@ -31,25 +31,21 @@ const admin = async (req, res) => {
                         as: 'categoria'
                     },
                     {
-                        model: Precio,
-                        as: 'precio'
-                    },
-                    {
                         model: Mensaje,
                         as: 'mensajes'
                     }
                 ]
             }),
-            Propiedad.count({
+            Evento.count({
                 where: {
                     usuarioId: id
                 }
             })
         ])
 
-        res.render('propiedades/admin', {
+        res.render('eventos/admin', {
             pagina: 'Eventos y Noticias',
-            propiedades,
+            eventos,
             csrfToken: req.csrfToken(),
             paginas: Math.ceil(total / limit),
             paginaActual: Number(paginaActual),
@@ -62,14 +58,13 @@ const admin = async (req, res) => {
         console.log(error)
     }
 }
-//Formulario para crear una propiedad
+//Formulario para crear un evento
 const crear = async (req, res) => {
     //Consultar modelo de precios y categorias
     const [categorias, precios] = await Promise.all([
-        Categoria.findAll(),
-        Precio.findAll()
+        Categoria.findAll()
     ])
-    res.render('propiedades/crear', {
+    res.render('eventos/crear', {
         pagina: 'Crear Evento',
         csrfToken: req.csrfToken(),
         categorias,
@@ -83,42 +78,36 @@ const guardar = async (req, res) => {
     if (!resultado.isEmpty()) {
 
         const [categorias, precios] = await Promise.all([
-            Categoria.findAll(),
-            Precio.findAll()
+            Categoria.findAll()
         ])
-        return res.render('propiedades/crear', {
-            pagina: 'Crear Propiedad',
+        return res.render('eventos/crear', {
+            pagina: 'Crear Evento',
             csrfToken: req.csrfToken(),
             categorias,
-            precios,
             errores: resultado.array(),
             datos: req.body
         })
     }
     //Crear un Registro
-    const { titulo, descripcion, habitaciones, estacionamiento, wc, calle, lat, lng, precio: precioId, categoria: categoriaId } = req.body
+    const { titulo, descripcion, calle, lat, lng, categoria: categoriaId } = req.body
 
     const { id: usuarioId } = req.usuario
 
     try {
-        const propiedadGuardada = await Propiedad.create({
+        const eventoGuardado = await Evento.create({
             titulo,
             descripcion,
-            habitaciones,
-            estacionamiento,
-            wc,
             calle,
             lat,
             lng,
-            precioId,
             categoriaId,
             usuarioId,
             imagen: ''
 
         })
-        const { id } = propiedadGuardada
+        const { id } = eventoGuardado
 
-        res.redirect(`/propiedades/agregar-imagen/${id}`)
+        res.redirect(`/eventos/agregar-imagen/${id}`)
 
     } catch (error) {
         console.log(error)
@@ -126,56 +115,56 @@ const guardar = async (req, res) => {
 }
 const agregarImagen = async (req, res) => {
     const { id } = req.params
-    //Validar que la propiedad exista
+    //Validar que el evento exista
 
-    const propiedad = await Propiedad.findByPk(id)
+    const evento = await Evento.findByPk(id)
 
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
     //validar que la propiedD NO ESTE PUBLICADA
-    if (propiedad.publicado) {
-        return res.redirect('/mis-propiedades')
+    if (evento.publicado) {
+        return res.redirect('/mis-eventos')
     }
-    //validar que la propiedad  pertenece a quien visita esta pagina
+    //validar que el evento pertenece a quien visita esta pagina
 
-    if (req.usuario.id.toString() !== propiedad.usuarioId.toString()) {
-        return res.redirect('/mis-propiedades')
+    if (req.usuario.id.toString() !== evento.usuarioId.toString()) {
+        return res.redirect('/mis-eventos')
     }
 
-    return res.render('propiedades/agregar-imagen', {
-        pagina: `Agregar Imagen: ${propiedad.titulo}`,
+    return res.render('eventos/agregar-imagen', {
+        pagina: `Agregar Imagen: ${evento.titulo}`,
         csrfToken: req.csrfToken(),
-        propiedad
+        evento
     })
 }
 
 const almacenarImagen = async (req, res, next) => {
 
     const { id } = req.params
-    // Validar que la propiedad exista
+    // Validar que el evento exista
 
-    const propiedad = await Propiedad.findByPk(id)
+    const evento = await Evento.findByPk(id)
 
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
-    // Validar que la propiedad NO ESTÉ PUBLICADA
-    if (propiedad.publicado) {
-        return res.redirect('/mis-propiedades')
+    // Validar que el evento NO ESTÉ PUBLICADA
+    if (evento.publicado) {
+        return res.redirect('/mis-eventos')
     }
-    // Validar que la propiedad pertenezca a quien visita esta página
+    // Validar que el evento pertenezca a quien visita esta página
 
-    if (req.usuario.id.toString() !== propiedad.usuarioId.toString()) {
-        return res.redirect('/mis-propiedades')
+    if (req.usuario.id.toString() !== evento.usuarioId.toString()) {
+        return res.redirect('/mis-eventos')
     }
     try {
         console.log(req.file)
-        //Alamcenar la Imagen y publicar propiedad
-        propiedad.imagen = req.file.filename
-        propiedad.publicado = 1
+        //Alamcenar la Imagen y publicar el evento
+        evento.imagen = req.file.filename
+        evento.publicado = 1
 
-        await propiedad.save()
+        await evento.save()
 
         next()
 
@@ -186,28 +175,26 @@ const almacenarImagen = async (req, res, next) => {
 const editar = async (req, res) => {
 
     const { id } = req.params
-    //Validar que la propiedad exista.
-    const propiedad = await Propiedad.findByPk(id)
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    //Validar que el evento exista.
+    const evento = await Evento.findByPk(id)
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
 
-    //Revisar que quien visita la URL es quien creó la propiedad.
-    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
-        return res.redirect('/mis-propiedades')
+    //Revisar que quien visita la URL es quien creó el evento
+    if (evento.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-eventos')
     }
 
     //Consultar Modelo de Precio y Categoria.
-    const [categorias, precios] = await Promise.all([
-        Categoria.findAll(),
-        Precio.findAll()
+    const [categorias] = await Promise.all([
+        Categoria.findAll()
     ])
-    res.render('propiedades/editar', {
-        pagina: `Editar Propiedad: ${propiedad.titulo} `,
+    res.render('eventos/editar', {
+        pagina: `Editar evento: ${evento.titulo} `,
         csrfToken: req.csrfToken(),
         categorias,
-        precios,
-        datos: propiedad
+        datos: evento
     })
 }
 const guardarCambios = async (req, res) => {
@@ -215,30 +202,28 @@ const guardarCambios = async (req, res) => {
     let resultado = validationResult(req)
     if (!resultado.isEmpty()) {
 
-        const [categorias, precios] = await Promise.all([
-            Categoria.findAll(),
-            Precio.findAll()
+        const [categorias] = await Promise.all([
+            Categoria.findAll()
         ])
-        return res.render('propiedades/editar', {
-            pagina: 'Editar Propiedad',
+        return res.render('eventos/editar', {
+            pagina: 'Editar eventos',
             csrfToken: req.csrfToken(),
             categorias,
-            precios,
             errores: resultado.array(),
             datos: req.body
         })
     }
 
     const { id } = req.params
-    //Validar que la propiedad exista.
-    const propiedad = await Propiedad.findByPk(id)
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    //Validar que el evento exista.
+    const evento = await Evento.findByPk(id)
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
 
-    //Revisar que quien visita la URL es quien creó la propiedad.
-    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
-        return res.redirect('/mis-propiedades')
+    //Revisar que quien visita la URL es quien creó el evento
+    if (evento.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-eventos')
     }
     // Reescribir el objeto y actualizarlo.
     try {
@@ -246,7 +231,7 @@ const guardarCambios = async (req, res) => {
 
         const { id: usuarioId } = req.usuario
 
-        propiedad.set({
+        evento.set({
             titulo,
             descripcion,
             habitaciones,
@@ -259,51 +244,51 @@ const guardarCambios = async (req, res) => {
             categoriaId
         })
 
-        await propiedad.save()
-        res.redirect('/mis-propiedades')
+        await evento.save()
+        res.redirect('/mis-eventos')
     } catch (error) {
         console.log(error)
     }
 }
 const eliminar = async (req, res) => {
     const { id } = req.params
-    //Validar que la propiedad exista.
-    const propiedad = await Propiedad.findByPk(id)
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    //Validar que el evento exista.
+    const evento = await Evento.findByPk(id)
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
 
-    //Revisar que quien visita la URL es quien creó la propiedad.
-    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
-        return res.redirect('/mis-propiedades')
+    //Revisar que quien visita la URL es quien creó el evento
+    if (evento.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-eventos')
     }
     //Eliminar la imagen.
-    await unlink(`public/uploads/${propiedad.imagen}`)
-    console.log(`Se elimino la imagen ${propiedad.imagen}`)
-    //Eliminar la propiedad.
-    await propiedad.destroy()
-    res.redirect('/mis-propiedades')
+    await unlink(`public/uploads/${evento.imagen}`)
+    console.log(`Se elimino la imagen ${evento.imagen}`)
+    //Eliminar el evento
+    await evento.destroy()
+    res.redirect('/mis-eventos')
 }
 
-//Modificar el  Estado de una Propiedad.
+//Modificar el  Estado de el evento
 const cambiarEstado = async (req,res)=>{
     const { id } = req.params
 
-    //validar que la propiedad exista
-    const propiedad = await Propiedad.findByPk(id)
+    //validar que el evento exista
+    const evento = await Evento.findByPk(id)
 
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
 
     //Revisar quin visita la URL sea dueño de la propeidd
-    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
-        return res.redirect('/mis-propiedades')
+    if (evento.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-eventos')
     }
     //Actualizar.
-    propiedad.publicado = !propiedad.publicado
+    evento.publicado = !evento.publicado
 
-    await propiedad.save()
+    await evento.save()
 
     res.json({
         resultado: 'true'
@@ -311,40 +296,39 @@ const cambiarEstado = async (req,res)=>{
 }
 
 
-//Muestra una Propiedad 
+//Muestra un evento
 const mostrarPropiedad = async (req, res) => {
     const { id } = req.params
-    //Validar que la propiedad exista.
-    const propiedad = await Propiedad.findByPk(id, {
+    //Validar que el evento exista.
+    const evento = await Evento.findByPk(id, {
         include: [
-            { model: Precio, as: 'precio' },
             { model: Categoria, as: 'categoria' }
         ]
     })
 
-    if (!propiedad || !propiedad.publicado) {
+    if (!evento || !evento.publicado) {
         return res.redirect('/404')
     }
 
-    res.render('propiedades/mostrar', {
-        propiedad,
-        pagina: propiedad.titulo,
+    res.render('eventos/mostrar', {
+        evento,
+        pagina: evento.titulo,
         csrfToken: req.csrfToken(),
         usuario: req.usuario,
-        esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId)
+        esVendedor: esVendedor(req.usuario?.id, evento.usuarioId)
     })
 }
 const enviarMensaje = async (req, res) => {
     const { id } = req.params
-    //Validar que la propiedad exista.
-    const propiedad = await Propiedad.findByPk(id, {
+    //Validar que el evento exista.
+    const evento = await Evento.findByPk(id, {
         include: [
             { model: Precio, as: 'precio' },
             { model: Categoria, as: 'categoria' }
         ]
     })
 
-    if (!propiedad) {
+    if (!evento) {
         return res.redirect('/404')
     }
 
@@ -352,24 +336,24 @@ const enviarMensaje = async (req, res) => {
     //Validación 
     let resultado = validationResult(req)
     if (!resultado.isEmpty()) {
-        return res.render('propiedades/mostrar', {
-            propiedad,
-            pagina: propiedad.titulo,
+        return res.render('eventos/mostrar', {
+            evento,
+            pagina: evento.titulo,
             csrfToken: req.csrfToken(),
             usuario: req.usuario,
-            esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId),
+            esVendedor: esVendedor(req.usuario?.id, evento.usuarioId),
             errores: resultado.array()
         })
     }
 
     const { mensaje } = req.body
-    const { id: propiedadId } = req.params
+    const { id: eventoId } = req.params
     const { id: usuarioId } = req.usuario
 
     //Almacenar el mensaje.
     await Mensaje.create({
         mensaje,
-        propiedadId,
+        eventoId,
         usuarioId
     })
 
@@ -379,8 +363,8 @@ const enviarMensaje = async (req, res) => {
 const verMensajes = async (req, res) => {
     const { id } = req.params
 
-    //validar que la propiedad exista
-    const propiedad = await Propiedad.findByPk(id,{
+    //validar que el evento exista
+    const evento = await Evento.findByPk(id,{
         include: [
             {model: Mensaje, as: 'mensajes',
             include:[
@@ -390,18 +374,18 @@ const verMensajes = async (req, res) => {
         ],
     })
 
-    if (!propiedad) {
-        return res.redirect('/mis-propiedades')
+    if (!evento) {
+        return res.redirect('/mis-eventos')
     }
 
-    //Revisar que quien visita la URL sea dueño de la propiedad
-    if (propiedad.usuarioId.toString() !== req.usuario.id.toString()) {
-        return res.redirect('/mis-propiedades')
+    //Revisar que quien visita la URL sea dueño de el evento
+    if (evento.usuarioId.toString() !== req.usuario.id.toString()) {
+        return res.redirect('/mis-eventos')
     }
 
-    res.render('propiedades/mensajes', {
+    res.render('eventos/mensajes', {
         pagina: 'Mensajes',
-        mensajes: propiedad.mensajes,
+        mensajes: evento.mensajes,
         formatearFecha
     })
 }

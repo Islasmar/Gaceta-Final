@@ -7,68 +7,60 @@ import identificarUsuario from "../middleware/identificarUsuario.js";
 
 const router = express.Router()
 
-router.get('/mis-propiedades', protegerRuta, admin)
-router.get('/propiedades/crear', protegerRuta, crear)
-router.post('/propiedades/crear',
+router.get('/mis-eventos', protegerRuta, admin)
+router.get('/eventos/crear', protegerRuta, crear)
+router.post('/eventos/crear',
     protegerRuta,
     body('titulo').notEmpty().withMessage('El Título del Anuncio es Obligatorio'),
     body('descripcion')
         .notEmpty().withMessage('La Descripción no puede ir vacia')
         .isLength({ max: 200 }).withMessage('La descripcion es muy larga'),
     body('categoria').isNumeric().withMessage('Selecciona una categoria'),
-    body('precio').isNumeric().withMessage('Selecciona un rango de precio'),
-    body('habitaciones').isNumeric().withMessage('Selecciona la cantidad de habitaciones'),
-    body('estacionamiento').isNumeric().withMessage('Selecciona la cantidad de estacionamientos'),
-    body('wc').isNumeric().withMessage('Selecciona la cantidad de wc'),
-    body('lat').notEmpty().withMessage('Ubica la propiedades en el Mapa'),
+    body('lat').notEmpty().withMessage('Ubica el Evento en el Mapa'),
     guardar
 )
-router.get('/propiedades/agregar-imagen/:id',
+router.get('/eventos/agregar-imagen/:id',
     protegerRuta,
     agregarImagen
 )
 
-router.post('/propiedades/agregar-imagen/:id',
+router.post('/eventos/agregar-imagen/:id',
     protegerRuta,
     upload.single('imagen'),
     almacenarImagen
 );
-router.get('/propiedades/editar/:id',
+router.get('/eventos/editar/:id',
     protegerRuta,
     editar
 )
 
-router.post('/propiedades/editar/:id',
+router.post('/eventos/editar/:id',
     protegerRuta,
     body('titulo').notEmpty().withMessage('El Título del Anuncio es Obligatorio'),
     body('descripcion')
         .notEmpty().withMessage('La Descripción no puede ir vacia')
         .isLength({ max: 200 }).withMessage('La descripcion es muy larga'),
     body('categoria').isNumeric().withMessage('Selecciona una categoria'),
-    body('precio').isNumeric().withMessage('Selecciona un rango de precio'),
-    body('habitaciones').isNumeric().withMessage('Selecciona la cantidad de habitaciones'),
-    body('estacionamiento').isNumeric().withMessage('Selecciona la cantidad de estacionamientos'),
-    body('wc').isNumeric().withMessage('Selecciona la cantidad de wc'),
-    body('lat').notEmpty().withMessage('Ubica la propiedades en el Mapa'),
+    body('lat').notEmpty().withMessage('Ubica el evento en el Mapa'),
     guardarCambios
 )
-router.post('/propiedades/eliminar/:id',
+router.post('/eventos/eliminar/:id',
     protegerRuta,
     eliminar
 )
-router.put('/propiedades/:id',
+router.put('/eventos/:id',
     protegerRuta,
     cambiarEstado
 )
 
 //Área pública
-router.get('/propiedades/:id',
+router.get('/eventos/:id',
     identificarUsuario,
     mostrarPropiedad
 )
 
 //Almacenar los mensajes.
-router.post('/propiedades/:id',
+router.post('/eventos/:id',
     identificarUsuario,
     body('mensaje').isLength({ min: 10 }).withMessage('El Mensaje no puede ir vacio o es muy corto'),
     enviarMensaje
