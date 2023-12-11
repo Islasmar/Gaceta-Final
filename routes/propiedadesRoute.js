@@ -20,7 +20,7 @@ router.post('/propiedades/crear',
     body('habitaciones').isNumeric().withMessage('Selecciona la cantidad de habitaciones'),
     body('estacionamiento').isNumeric().withMessage('Selecciona la cantidad de estacionamientos'),
     body('wc').isNumeric().withMessage('Selecciona la cantidad de wc'),
-    body('lat').notEmpty().withMessage('Ubica la propiedad en el Mapa'),
+    body('lat').notEmpty().withMessage('Ubica la propiedades en el Mapa'),
     guardar
 )
 router.get('/propiedades/agregar-imagen/:id',
@@ -49,7 +49,7 @@ router.post('/propiedades/editar/:id',
     body('habitaciones').isNumeric().withMessage('Selecciona la cantidad de habitaciones'),
     body('estacionamiento').isNumeric().withMessage('Selecciona la cantidad de estacionamientos'),
     body('wc').isNumeric().withMessage('Selecciona la cantidad de wc'),
-    body('lat').notEmpty().withMessage('Ubica la propiedad en el Mapa'),
+    body('lat').notEmpty().withMessage('Ubica la propiedades en el Mapa'),
     guardarCambios
 )
 router.post('/propiedades/eliminar/:id',
@@ -62,13 +62,13 @@ router.put('/propiedades/:id',
 )
 
 //Área pública
-router.get('/propiedad/:id',
+router.get('/propiedades/:id',
     identificarUsuario,
     mostrarPropiedad
 )
 
 //Almacenar los mensajes.
-router.post('/propiedad/:id',
+router.post('/propiedades/:id',
     identificarUsuario,
     body('mensaje').isLength({ min: 10 }).withMessage('El Mensaje no puede ir vacio o es muy corto'),
     enviarMensaje

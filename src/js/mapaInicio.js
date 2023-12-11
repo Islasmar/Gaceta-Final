@@ -47,18 +47,18 @@
         //Limpiar los markers previos.
         markers.clearLayers()
 
-        propiedades.forEach(propiedad => {
+        propiedades.forEach(propiedades => {
             //Agregar los pines
 
-            const marker = new L.marker([propiedad?.lat, propiedad?.lng], {
+            const marker = new L.marker([propiedades?.lat, propiedades?.lng], {
                 autoPan: true //Cunado de clikc en el marker se va a sentrar en el mapa
             })
                 .addTo(mapa)
                 .bindPopup(`
-            <h1 class="text-xl font-extrabold uppercase my-5"> ${propiedad.titulo} </h1>
-            <img src="uploads/${propiedad?.imagen}" alt="Imagen de la propiedad ${propiedad.titulo}">
-            <p class="text-gray-600 font-bold">${propiedad.precio.nombre}</p>
-            <a href="/propiedad/${propiedad.id}" class="bg-aqua w-full text-center block font-bold text-white p-3 uppercase rounded"> Ver Propiedad </a>
+            <h1 class="text-xl font-extrabold uppercase my-5"> ${propiedades.titulo} </h1>
+            <img src="uploads/${propiedades?.imagen}" alt="Imagen de la propiedades ${propiedades.titulo}">
+            <p class="text-gray-600 font-bold">${propiedades.precio.nombre}</p>
+            <a href="/propiedades/${propiedades.id}" class="bg-aqua w-full text-center block font-bold text-white p-3 uppercase rounded"> Ver propiedades </a>
             `)
 
             markers.addLayer(marker)
@@ -71,12 +71,12 @@
        mostrarPropiedades(resultado)
     }
 
-    const filtrarCategoria = (propiedad) => {
-        return filtros.categoria ? propiedad.categoriaId === filtros.categoria : propiedad
+    const filtrarCategoria = (propiedades) => {
+        return filtros.categoria ? propiedades.categoriaId === filtros.categoria : propiedades
     }
 
-    const filtrarPrecio = (propiedad) => {
-        return filtros.precio ? propiedad.precioId === filtros.precio : propiedad
+    const filtrarPrecio = (propiedades) => {
+        return filtros.precio ? propiedades.precioId === filtros.precio : propiedades
     }
     obtenerPropiedades()
 })()

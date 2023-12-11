@@ -70,7 +70,7 @@ const crear = async (req, res) => {
         Precio.findAll()
     ])
     res.render('propiedades/crear', {
-        pagina: 'Crear Propiedad',
+        pagina: 'Crear Evento',
         csrfToken: req.csrfToken(),
         categorias,
         precios,
