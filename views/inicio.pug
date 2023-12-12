@@ -22,7 +22,7 @@ block contenido
             h2(class="text-center text-4xl font-extrabold pt-10") Noticias populares
 
             div(class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-14")
-                each eventos in noticia
+                each evento in noticia
                     include ./templates/card
 
 
@@ -30,7 +30,7 @@ block contenido
             h2(class="text-center text-4xl font-extrabold pt-10") Actividades Culturales
 
             div(class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-14")
-                each eventos in actividadesCulturales
+                each evento in actividadesCulturales
                     include ./templates/card
 
  

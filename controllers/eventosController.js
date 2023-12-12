@@ -1,7 +1,7 @@
 import { unlink } from 'node:fs/promises'
 import { validationResult } from 'express-validator';
 import { Categoria, Evento, Mensaje, Usuario } from '../models/index.js';
-import { esVendedor, formatearFecha } from '../helpers/index.js'
+import { esAutor, formatearFecha } from '../helpers/index.js'
 
 const admin = async (req, res) => {
     //Leer QueryString
@@ -68,7 +68,6 @@ const crear = async (req, res) => {
         pagina: 'Crear Evento',
         csrfToken: req.csrfToken(),
         categorias,
-        precios,
         datos: {}
     })
 }
@@ -227,20 +226,16 @@ const guardarCambios = async (req, res) => {
     }
     // Reescribir el objeto y actualizarlo.
     try {
-        const { titulo, descripcion, habitaciones, estacionamiento, wc, calle, lat, lng, precio: precioId, categoria: categoriaId } = req.body
+        const { titulo, descripcion, calle, lat, lng, categoria: categoriaId } = req.body
 
         const { id: usuarioId } = req.usuario
 
         evento.set({
             titulo,
             descripcion,
-            habitaciones,
-            estacionamiento,
-            wc,
             calle,
             lat,
             lng,
-            precioId,
             categoriaId
         })
 
@@ -297,7 +292,7 @@ const cambiarEstado = async (req,res)=>{
 
 
 //Muestra un evento
-const mostrarPropiedad = async (req, res) => {
+const mostrarEvento = async (req, res) => {
     const { id } = req.params
     //Validar que el evento exista.
     const evento = await Evento.findByPk(id, {
@@ -315,7 +310,7 @@ const mostrarPropiedad = async (req, res) => {
         pagina: evento.titulo,
         csrfToken: req.csrfToken(),
         usuario: req.usuario,
-        esVendedor: esVendedor(req.usuario?.id, evento.usuarioId)
+        esAutor: esAutor(req.usuario?.id, evento.usuarioId)
     })
 }
 const enviarMensaje = async (req, res) => {
@@ -323,7 +318,6 @@ const enviarMensaje = async (req, res) => {
     //Validar que el evento exista.
     const evento = await Evento.findByPk(id, {
         include: [
-            { model: Precio, as: 'precio' },
             { model: Categoria, as: 'categoria' }
         ]
     })
@@ -341,7 +335,7 @@ const enviarMensaje = async (req, res) => {
             pagina: evento.titulo,
             csrfToken: req.csrfToken(),
             usuario: req.usuario,
-            esVendedor: esVendedor(req.usuario?.id, evento.usuarioId),
+            esAutor: esAutor(req.usuario?.id, evento.usuarioId),
             errores: resultado.array()
         })
     }
@@ -399,7 +393,7 @@ export {
     guardarCambios,
     eliminar,
     cambiarEstado,
-    mostrarPropiedad,
+    mostrarEvento,
     enviarMensaje,
     verMensajes
 }

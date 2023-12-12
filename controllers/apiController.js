@@ -1,10 +1,9 @@
 import { Evento, Categoria } from "../models/index.js"
 
-const propiedades = async (req, res) => {
+const eventos = async (req, res) => {
 
     const eventos = await Evento.findAll({
         include: [
-            { model: Precio, as: 'precio' },
             { model: Categoria, as: 'categoria' }
         ]
     })
@@ -13,5 +12,5 @@ const propiedades = async (req, res) => {
 }
 
 export {
-    propiedades
+   eventos
 }

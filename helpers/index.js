@@ -1,5 +1,5 @@
-const esVendedor = (usuarioID, propiedadUsuarioID) => {
-    return usuarioID === propiedadUsuarioID
+const esAutor = (usuarioID, eventoUsuarioID) => {
+    return usuarioID === eventoUsuarioID
 }
 
 const formatearFecha = fecha => {
@@ -14,4 +14,4 @@ const formatearFecha = fecha => {
     return new Date(nuevaFecha).toLocaleDateString('es-ES', opciones)
 }
 
-export { esVendedor, formatearFecha }
+export { esAutor, formatearFecha }

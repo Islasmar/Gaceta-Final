@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from 'express-validator';
-import { admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar, cambiarEstado, mostrarPropiedad, enviarMensaje, verMensajes } from '../controllers/propiedadController.js'
+import { admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar, cambiarEstado, mostrarEvento, enviarMensaje, verMensajes } from '../controllers/eventosController.js'
 import protegerRuta from "../middleware/protegerRutas.js";
 import upload from '../middleware/subirImagen.js';
 import identificarUsuario from "../middleware/identificarUsuario.js";
@@ -56,7 +56,7 @@ router.put('/eventos/:id',
 //Área pública
 router.get('/eventos/:id',
     identificarUsuario,
-    mostrarPropiedad
+    mostrarEvento
 )
 
 //Almacenar los mensajes.

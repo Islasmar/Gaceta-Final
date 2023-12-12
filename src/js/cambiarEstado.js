@@ -3,10 +3,10 @@
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
     cambiarEstadoBotones.forEach(boton => {
-        boton.addEventListener('click', cambiarEstadoPropiedad)
+        boton.addEventListener('click', cambiarEstadoEvento)
     })
 
-    async function cambiarEstadoPropiedad(e) {
+    async function cambiarEstadoEvento(e) {
         const { eventosId: id } = e.target.dataset
 
 

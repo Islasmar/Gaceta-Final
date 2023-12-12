@@ -21,14 +21,14 @@ block contenido
                 input(type="hidden" name="_csrf" value= csrfToken)
                 div.space-y-8
                     h3.text-lg.leading-6.font-medium.text-gray-900 Información General
-                    p.text-gray-600 Añade Información sobre la propiedades en venta
+                    p.text-gray-600 Añade Información sobre los eventos
                 div 
                     label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="titulo") Titulo de anuncio
-                    input#titulo.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Titulo propiedades, ej. Casa en la Playa" type="text" name="titulo" value= datos.titulo ? datos.titulo : '')
+                    input#titulo.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Titulo de los eventos, ej. Casa en la Playa" type="text" name="titulo" value= datos.titulo ? datos.titulo : '')
 
                 div 
                     label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="descripcion") Descripcion
-                    textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción de la propiedades" name="descripcion")= datos.descripcion ? datos.descripcion : '' 
+                    textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción de los eventos" name="descripcion")= datos.descripcion ? datos.descripcion : '' 
                     
 
                 div(class="md:flex md:gap-4 space-y-8 md:space-y-0")    
@@ -41,7 +41,7 @@ block contenido
 
                 div.border-gray-200.border-t.py-5.space-y-5
                     h3.text-lg.leading-6.font-medium.text-gray-900 Ubicación
-                    p.text-gray-600 Ubica la propiedades en el mapa  
+                    p.text-gray-600 Ubica los eventos en el mapa  
                     #mapa.h-96
 
                     div 

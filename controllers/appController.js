@@ -45,12 +45,9 @@ const categoria = async(req, res) => {
         where:{
             categoriaId: id
         },
-        include: [
-            {model: Precio, as: 'precio'}
-        ]
     })
     res.render('categoria',{
-        pagina: `${categoria.nombre}s en Venta`,
+        pagina: `${categoria.nombre}`,
         eventos,
         csrfToken: req.csrfToken()
     })
@@ -77,9 +74,6 @@ const buscador = async (req, res) => {
                     [Sequelize.Op.like] : '%' + termino + '%'
                 }
             },
-            include: [
-                {model: Precio , as: 'precio'}
-            ]
         })
         res.render('busqueda',{
             pagina: 'Resultados de la Busqueda',

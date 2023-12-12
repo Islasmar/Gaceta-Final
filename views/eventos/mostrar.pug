@@ -30,9 +30,9 @@ block contenido
                     p(class="text-gray-600 font-bold text-xs") Direccion 
                         span(id="calle" class="text-gray-800 block text-lg")= evento.calle
 
-                    if !esVendedor
+                    if !esAutor
 
-                        h3(class="text-2xl text-center my-10 font-extrabold text-gray-900") Vendedor
+                        h3(class="text-2xl text-center my-10 font-extrabold text-gray-900") Autor
 
                         if enviado 
                             p(class="p-2 text-center bg-green-100 text-green-600 uppercase font-bold") Mensaje Enviado Correctamente
@@ -54,7 +54,7 @@ block contenido
                                     input(type="submit" value="Enviar Mensaje" class="bg-aqua text-white font-bold uppercase text-sm w-full p-2 cursor-pointer")
                         else 
                             div(class='flex flex-col items-center justify-center gap-2')
-                                p(class='text-center') Si desea contactar al vendedor 
+                                p(class='text-center') Si desea contactar al Autor 
                                 a(class="text-indigo-600" href="/auth/crear-cuenta") debes crear una cuenta
                         
 

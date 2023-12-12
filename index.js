@@ -2,7 +2,7 @@ import express from 'express';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
-import propiedadesRoutes from './routes/propiedadesRoute.js';
+import eventosRoutes from './routes/eventosRoute.js';
 import appRoutes from './routes/appRoutes.js';
 import apiRoutes from './routes/apiRoutes.js';
 import db from './config/db.js';
@@ -33,7 +33,7 @@ app.set('views', './views')
 //Routing 
 app.use('/',appRoutes)
 app.use('/auth', userRoutes);
-app.use('/', propiedadesRoutes);
+app.use('/', eventosRoutes);
 app.use('/api',apiRoutes)
 
 

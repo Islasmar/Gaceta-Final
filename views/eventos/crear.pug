@@ -16,19 +16,19 @@ block contenido
 
 
 
-        div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
+        div(class="bg-white py-8 px-4  mx-auto max-w-4xl my-10 md:px-10  shadow-negro rounded-md")
             form.space-y-8(method="POST" action="/eventos/crear")
                 input(type="hidden" name="_csrf" value= csrfToken)
                 div.space-y-8
                     h3.text-lg.leading-6.font-medium.text-gray-900 Información General
-                    p.text-gray-600 Añade Información sobre la propiedades en venta
+                    p.text-gray-600 Añade Información sobre los eventos
                 div 
                     label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="titulo") Titulo
                     input#titulo.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Titulo del evento, ej. Chica chico UTXJ " type="text" name="titulo" value= datos.titulo ? datos.titulo : '')
 
                 div 
                     label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="descripcion") Descripcion del Evento
-                    textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción de la propiedades" name="descripcion")= datos.descripcion ? datos.descripcion : '' 
+                    textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción de los eventos" name="descripcion")= datos.descripcion ? datos.descripcion : '' 
                     
 
                 div(class="md:flex md:gap-4 space-y-8 md:space-y-0")    
@@ -40,7 +40,7 @@ block contenido
                                 option(value=categoria.id selected= datos.categoria ? datos.categoria == categoria.id ? true : false : null)= categoria.nombre
                 div.border-gray-200.border-t.py-5.space-y-5
                     h3.text-lg.leading-6.font-medium.text-gray-900 Ubicación
-                    p.text-gray-600 Ubica la propiedades en el mapa  
+                    p.text-gray-600 Ubica los eventos en el mapa  
                     #mapa.h-96
 
                     div 

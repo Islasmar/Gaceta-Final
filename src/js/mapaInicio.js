@@ -1,20 +1,18 @@
 
 (function () {
     //Login Or 
-    const lat = 20.617893;
-    const lng = -97.818094;
+    const lat = 20.237786;
+    const lng = -97.9575799;
     const mapa = L.map('mapa-inicio').setView([lat, lng], 13);
 
     let markers = new L.FeatureGroup().addTo(mapa)
-    let propiedades = [];
+    let eventos = [];
     //Filtros
     const filtros = {
         categoria: '',
-        precio: ''
     }
 
     const categoriasSelect = document.querySelector('#categorias');
-    const preciosSelect = document.querySelector('#precios');
 
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -25,40 +23,35 @@
 
     categoriasSelect.addEventListener('change', e => {
         filtros.categoria = +e.target.value
-        filtrarPropiedades();
+        filtrarEventos();
     })
 
-    preciosSelect.addEventListener('change', e => {
-        filtros.precio = +e.target.value
-        filtrarPropiedades();
-    })
-
-    const obtenerPropiedades = async () => {
+    const obtenerEventos = async () => {
         try {
-            const url = '/api/propiedades'
+            const url = '/api/eventos'
             const respuesta = await fetch(url)
-            propiedades = await respuesta.json()
-            mostrarPropiedades(propiedades)
+            eventos = await respuesta.json()
+            mostrarEventos(eventos)
         } catch (error) {
             console.log(error)
         }
     }
-    const mostrarPropiedades = propiedades => {
+    const mostrarEventos = eventos => {
         //Limpiar los markers previos.
         markers.clearLayers()
 
-        propiedades.forEach(propiedades => {
+        eventos.forEach(eventos => {
             //Agregar los pines
 
-            const marker = new L.marker([propiedades?.lat, propiedades?.lng], {
+            const marker = new L.marker([eventos?.lat, eventos?.lng], {
                 autoPan: true //Cunado de clikc en el marker se va a sentrar en el mapa
             })
                 .addTo(mapa)
                 .bindPopup(`
-            <h1 class="text-xl font-extrabold uppercase my-5"> ${propiedades.titulo} </h1>
-            <img src="uploads/${propiedades?.imagen}" alt="Imagen de la propiedades ${propiedades.titulo}">
-            <p class="text-gray-600 font-bold">${propiedades.precio.nombre}</p>
-            <a href="/propiedades/${propiedades.id}" class="bg-aqua w-full text-center block font-bold text-white p-3 uppercase rounded"> Ver propiedades </a>
+            <h1 class="text-xl font-extrabold uppercase my-5"> ${eventos.titulo} </h1>
+            <img src="uploads/${eventos?.imagen}" alt="Imagen de la eventos ${eventos.titulo}">
+            <p class="text-gray-600 font-bold">${eventos.categoria.nombre}</p>
+            <a href="/eventos/${eventos.id}" class="bg-aqua w-full text-center block font-bold text-white p-3 uppercase rounded"> Ver eventos</a>
             `)
 
             markers.addLayer(marker)
@@ -66,17 +59,17 @@
 
     }
 
-    const filtrarPropiedades = () => {
-        const resultado = propiedades.filter(filtrarCategoria).filter(filtrarPrecio)
-       mostrarPropiedades(resultado)
+    const filtrarEventos = () => {
+        const resultado = eventos.filter(filtrarCategoria).filter(filtrarPrecio)
+       mostrarEventos(resultado)
     }
 
-    const filtrarCategoria = (propiedades) => {
-        return filtros.categoria ? propiedades.categoriaId === filtros.categoria : propiedades
+    const filtrarCategoria = (eventos) => {
+        return filtros.categoria ? eventos.categoriaId === filtros.categoria : eventos
     }
 
-    const filtrarPrecio = (propiedades) => {
-        return filtros.precio ? propiedades.precioId === filtros.precio : propiedades
+    const filtrarPrecio = (eventos) => {
+        return filtros.precio ? eventos.precioId === filtros.precio : eventos
     }
-    obtenerPropiedades()
+    obtenerEventos()
 })()
