@@ -4,8 +4,14 @@ header.bg-aqua.p-4
             h1.text-2xl.text-white.font-extrabold.text-center Gaceta 
                 span.font-normal UTXJ
         nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden") 
-            a(href="/mis-eventos" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Inicio    
-            a(href="/auth/login" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Iniciar Sesión   
+            a(href="/mis-eventos" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Eventos 
+            if usuario 
+                form(action="/auth/cerrar-sesion" method="POST")  
+                    input(type="hidden" name="_csrf" value= csrfToken)
+                    button(type="submit" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Cerrar Sesión 
+            else
+                a(href="/auth/login" class="bg-white text-black h-full  hover:bg-azul hover:text-white   hover:scale-105 shadow shadow-gray-600 active:scale-95 py-2 px-10 rounded-lg" ) Iniciar Sesión 
+                 
 div(class="bg-body py-5 hidden lg:block")
     div(class="container mx-auto flex justify-between")
         nav(class="flex gap-4 items-center") 

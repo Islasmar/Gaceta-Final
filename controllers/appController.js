@@ -1,5 +1,6 @@
 import {Sequelize} from 'sequelize';
-import {Categoria, Evento } from '../models/index.js';
+import {Categoria, Evento, Usuario } from '../models/index.js';
+
 
 const inicio = async (req, res) => {
     const [categorias, noticia, actividadesCulturales] = await Promise.all([
@@ -23,12 +24,14 @@ const inicio = async (req, res) => {
             ]
         })
     ])
+    const { _token } = req.cookies
     res.render('inicio', {
         pagina: 'Inicio',
         categorias,
         noticia,
         actividadesCulturales,
-        csrfToken: req.csrfToken()
+        csrfToken: req.csrfToken(),
+        usuario:req.usuario
     })
 
 }
